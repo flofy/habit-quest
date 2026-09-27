@@ -1,0 +1,23 @@
+{
+  "name": "habit-quest",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Open-source habit tracker RPG — quests, XP, gold, expeditions. Svelte 5 + Tailwind v4 + shadcn-svelte.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@tailwindcss/vite": "^4.0.0",
+    "svelte": "^5.20.0",
+    "tailwindcss": "^4.0.0",
+    "vite": "^6.1.0"
+  }
+}
