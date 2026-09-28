@@ -13,14 +13,15 @@
 
 <div class="space-y-2">
   <p class="px-1 text-xs text-muted-foreground">
-    Équipement possédé : {$game.owned.length}/{SHOP_ITEMS.length}. Clique un objet possédé pour l'équiper.
+    Équipement possédé : {$game.owned.length}/{SHOP_ITEMS.length}. Touchez un objet possédé pour
+    l'équiper.
   </p>
   {#each SHOP_ITEMS as item (item.id)}
     {@const owned = $game.owned.includes(item.id)}
     {@const equipped = $game.equipped.includes(item.id)}
     <Card>
       <CardContent class="flex items-center gap-3 p-4">
-        <span class="text-2xl">{item.emoji}</span>
+        <span class="text-2xl" aria-hidden="true">{item.emoji}</span>
         <div class="flex-1">
           <div class="text-sm font-bold">{item.name}</div>
           <div class="text-xs text-muted-foreground">{item.type}</div>
@@ -29,6 +30,7 @@
           <Button
             variant={equipped ? "default" : "secondary"}
             size="sm"
+            aria-pressed={equipped}
             onclick={() => toggleEquip(item.id)}
           >
             {equipped ? "Équipé" : "Équiper"}
@@ -38,6 +40,7 @@
             variant="outline"
             size="sm"
             disabled={$game.coins < item.cost}
+            aria-label="Acheter {item.name} pour {item.cost} pièces"
             onclick={() => onBuy(item)}
           >
             🪙 {item.cost}
@@ -48,7 +51,7 @@
   {/each}
   <Card>
     <CardContent class="flex items-center gap-3 p-4">
-      <span class="text-2xl">🎭</span>
+      <span class="text-2xl" aria-hidden="true">🎭</span>
       <div class="flex-1 text-sm">Changer de personnage</div>
       <Button variant="secondary" size="sm" onclick={cycleAvatar}>
         {AVATARS[$game.avatar].name}

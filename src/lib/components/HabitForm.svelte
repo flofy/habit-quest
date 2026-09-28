@@ -21,62 +21,89 @@
 </script>
 
 <Card class="mb-3">
-  <CardContent class="space-y-2 p-4">
-    <input
-      bind:value={name}
-      placeholder="Nom de l'habitude…"
-      class="w-full rounded-lg border border-border bg-secondary px-3 py-2 text-sm outline-none focus:border-ring"
-    />
-    <div class="flex items-center gap-2">
+  <CardContent class="space-y-3 p-4">
+    <div class="space-y-1">
+      <label for="habit-name" class="text-xs font-medium text-muted-foreground">Nom</label>
       <input
-        bind:value={emoji}
-        class="w-14 rounded-lg border border-border bg-secondary px-2 py-2 text-center text-sm"
-      />
-      <input
-        type="number"
-        min="1"
-        max="50"
-        bind:value={xp}
-        class="w-20 rounded-lg border border-border bg-secondary px-2 py-2 text-sm"
-        title="XP"
-      />
-      <input
-        type="number"
-        min="1"
-        max="50"
-        bind:value={coins}
-        class="w-20 rounded-lg border border-border bg-secondary px-2 py-2 text-sm"
-        title="Pièces"
+        id="habit-name"
+        bind:value={name}
+        placeholder="Ex : Marcher 30 min"
+        class="h-11 w-full rounded-lg border border-input bg-secondary px-3 text-sm outline-none focus:border-ring"
       />
     </div>
-    <div class="flex gap-2">
-      {#each RECURRENCES as r}
-        <Button
-          size="sm"
-          variant={rec === r.id ? "default" : "secondary"}
-          class="flex-1"
-          onclick={() => (rec = r.id)}
-        >
-          {r.label}
-        </Button>
-      {/each}
+    <div class="flex items-end gap-2">
+      <div class="space-y-1">
+        <label for="habit-emoji" class="text-xs font-medium text-muted-foreground">Icône</label>
+        <input
+          id="habit-emoji"
+          bind:value={emoji}
+          class="h-11 w-14 rounded-lg border border-input bg-secondary px-2 text-center text-sm"
+        />
+      </div>
+      <div class="space-y-1">
+        <label for="habit-xp" class="text-xs font-medium text-muted-foreground">XP</label>
+        <input
+          id="habit-xp"
+          type="number"
+          min="1"
+          max="50"
+          bind:value={xp}
+          class="h-11 w-20 rounded-lg border border-input bg-secondary px-2 text-sm"
+        />
+      </div>
+      <div class="space-y-1">
+        <label for="habit-coins" class="text-xs font-medium text-muted-foreground">Pièces</label>
+        <input
+          id="habit-coins"
+          type="number"
+          min="1"
+          max="50"
+          bind:value={coins}
+          class="h-11 w-20 rounded-lg border border-input bg-secondary px-2 text-sm"
+        />
+      </div>
     </div>
-    {#if rec === "custom"}
-      <div class="flex gap-1">
-        {#each DAYS as d, i}
-          <button
-            class="h-9 w-9 cursor-pointer rounded-lg text-sm {days.includes(i)
-              ? 'bg-primary text-primary-foreground font-bold'
-              : 'bg-secondary text-muted-foreground'}"
-            onclick={() => (days = days.includes(i) ? days.filter((x) => x !== i) : [...days, i])}
+    <div class="space-y-1">
+      <span class="text-xs font-medium text-muted-foreground">Récurrence</span>
+      <div class="flex gap-2">
+        {#each RECURRENCES as r}
+          <Button
+            size="sm"
+            variant={rec === r.id ? "default" : "secondary"}
+            class="flex-1"
+            aria-pressed={rec === r.id}
+            onclick={() => (rec = r.id)}
           >
-            {d}
-          </button>
+            {r.label}
+          </Button>
         {/each}
       </div>
+    </div>
+    {#if rec === "custom"}
+      <div class="space-y-1">
+        <span class="text-xs font-medium text-muted-foreground">Jours</span>
+        <div class="flex gap-1">
+          {#each DAYS as d, i}
+            <button
+              type="button"
+              class="h-11 w-11 cursor-pointer rounded-lg text-sm transition-colors duration-100 {days.includes(i)
+                ? 'bg-primary font-bold text-primary-foreground'
+                : 'bg-secondary text-muted-foreground hover:bg-secondary/70'}"
+              aria-pressed={days.includes(i)}
+              aria-label="Le {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'][i]}"
+              onclick={() =>
+                (days = days.includes(i) ? days.filter((x) => x !== i) : [...days, i])}
+            >
+              {d}
+            </button>
+          {/each}
+        </div>
+      </div>
     {/if}
-    <div class="flex gap-2">
-      <Button variant="accent" class="flex-1 font-bold" onclick={submit}>Créer la quête</Button>
+    <div class="flex gap-2 pt-1">
+      <Button variant="accent" class="flex-1 font-bold" onclick={submit}>
+        Créer la quête
+      </Button>
       <Button variant="outline" onclick={onclose}>Annuler</Button>
     </div>
   </CardContent>

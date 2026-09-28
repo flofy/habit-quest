@@ -37,9 +37,18 @@
   {#if active}
     <Card class="py-8">
       <CardContent class="text-center">
-        <div class="mb-2 animate-bounce text-4xl">{active.region.emoji}</div>
-        <div class="text-sm text-muted-foreground">Exploration en cours…</div>
-        <div class="mx-auto mt-3 h-2 w-full max-w-xs overflow-hidden rounded-full bg-muted">
+        <div class="mb-2 animate-bounce text-4xl" aria-hidden="true">{active.region.emoji}</div>
+        <div class="text-sm text-muted-foreground" role="status">
+          Exploration de {active.region.name} en cours…
+        </div>
+        <div
+          class="mx-auto mt-3 h-2 w-full max-w-xs overflow-hidden rounded-full bg-muted"
+          role="progressbar"
+          aria-label="Progression de l'expédition"
+          aria-valuenow={Math.round(progress)}
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
           <div class="h-full bg-primary transition-all" style="width: {progress}%"></div>
         </div>
       </CardContent>
@@ -48,7 +57,7 @@
     {#each REGIONS as region (region.id)}
       <Card>
         <CardContent class="flex items-center gap-3 p-4">
-          <span class="text-3xl">{region.emoji}</span>
+          <span class="text-3xl" aria-hidden="true">{region.emoji}</span>
           <div class="flex-1">
             <div class="text-sm font-bold">{region.name}</div>
             <div class="text-xs text-muted-foreground">
@@ -60,6 +69,7 @@
             variant="secondary"
             size="sm"
             disabled={$game.coins < region.cost}
+            aria-label="Lancer une expédition vers {region.name} pour {region.cost} pièces"
             onclick={() => onStart(region)}
           >
             🪙 {region.cost}
