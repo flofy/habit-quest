@@ -23,48 +23,48 @@
 <Card class="mb-3">
   <CardContent class="space-y-3 p-4">
     <div class="space-y-1">
-      <label for="habit-name" class="text-xs font-medium text-muted-foreground">Nom</label>
+      <label for="habit-name" class="text-xs font-bold text-muted-foreground">Nom</label>
       <input
         id="habit-name"
         bind:value={name}
         placeholder="Ex : Marcher 30 min"
-        class="h-11 w-full rounded-lg border border-input bg-secondary px-3 text-sm outline-none focus:border-ring"
+        class="panel-inset h-11 w-full px-3 text-sm text-foreground outline-none focus:border-ring"
       />
     </div>
     <div class="flex items-end gap-2">
       <div class="space-y-1">
-        <label for="habit-emoji" class="text-xs font-medium text-muted-foreground">Icône</label>
+        <label for="habit-emoji" class="text-xs font-bold text-muted-foreground">Icône</label>
         <input
           id="habit-emoji"
           bind:value={emoji}
-          class="h-11 w-14 rounded-lg border border-input bg-secondary px-2 text-center text-sm"
+          class="panel-inset h-11 w-14 px-2 text-center text-sm"
         />
       </div>
       <div class="space-y-1">
-        <label for="habit-xp" class="text-xs font-medium text-muted-foreground">XP</label>
+        <label for="habit-xp" class="text-xs font-bold text-muted-foreground">XP</label>
         <input
           id="habit-xp"
           type="number"
           min="1"
           max="50"
           bind:value={xp}
-          class="h-11 w-20 rounded-lg border border-input bg-secondary px-2 text-sm"
+          class="panel-inset h-11 w-20 px-2 text-sm"
         />
       </div>
       <div class="space-y-1">
-        <label for="habit-coins" class="text-xs font-medium text-muted-foreground">Pièces</label>
+        <label for="habit-coins" class="text-xs font-bold text-muted-foreground">Pièces</label>
         <input
           id="habit-coins"
           type="number"
           min="1"
           max="50"
           bind:value={coins}
-          class="h-11 w-20 rounded-lg border border-input bg-secondary px-2 text-sm"
+          class="panel-inset h-11 w-20 px-2 text-sm"
         />
       </div>
     </div>
     <div class="space-y-1">
-      <span class="text-xs font-medium text-muted-foreground">Récurrence</span>
+      <span class="text-xs font-bold text-muted-foreground">Récurrence</span>
       <div class="flex gap-2">
         {#each RECURRENCES as r}
           <Button
@@ -81,14 +81,14 @@
     </div>
     {#if rec === "custom"}
       <div class="space-y-1">
-        <span class="text-xs font-medium text-muted-foreground">Jours</span>
+        <span class="text-xs font-bold text-muted-foreground">Jours</span>
         <div class="flex gap-1">
           {#each DAYS as d, i}
             <button
               type="button"
-              class="h-11 w-11 cursor-pointer rounded-lg text-sm transition-colors duration-100 {days.includes(i)
-                ? 'bg-primary font-bold text-primary-foreground'
-                : 'bg-secondary text-muted-foreground hover:bg-secondary/70'}"
+              class="h-11 w-11 cursor-pointer rounded-lg text-sm font-bold transition-colors duration-75 {days.includes(i)
+                ? 'bg-gradient-to-b from-[#f4cd6f] to-[#dda031] text-[#3a2a08] border border-[#8a5f16] shadow-[0_2px_0_#8a5f16]'
+                : 'panel-inset text-muted-foreground hover:text-secondary-foreground'}"
               aria-pressed={days.includes(i)}
               aria-label="Le {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'][i]}"
               onclick={() =>
@@ -101,7 +101,7 @@
       </div>
     {/if}
     <div class="flex gap-2 pt-1">
-      <Button variant="accent" class="flex-1 font-bold" onclick={submit}>
+      <Button variant="accent" class="flex-1" onclick={submit}>
         Créer la quête
       </Button>
       <Button variant="outline" onclick={onclose}>Annuler</Button>

@@ -20,8 +20,10 @@
     {@const owned = $game.owned.includes(item.id)}
     {@const equipped = $game.equipped.includes(item.id)}
     <Card>
-      <CardContent class="flex items-center gap-3 p-4">
-        <span class="text-2xl" aria-hidden="true">{item.emoji}</span>
+      <CardContent class="flex items-center gap-3 p-3">
+        <div class="panel-inset flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl" aria-hidden="true">
+          {item.emoji}
+        </div>
         <div class="flex-1">
           <div class="text-sm font-bold">{item.name}</div>
           <div class="text-xs text-muted-foreground">{item.type}</div>
@@ -50,9 +52,11 @@
     </Card>
   {/each}
   <Card>
-    <CardContent class="flex items-center gap-3 p-4">
-      <span class="text-2xl" aria-hidden="true">🎭</span>
-      <div class="flex-1 text-sm">Changer de personnage</div>
+    <CardContent class="flex items-center gap-3 p-3">
+      <div class="panel-inset flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl" aria-hidden="true">
+        🎭
+      </div>
+      <div class="flex-1 text-sm font-bold">Changer de personnage</div>
       <Button variant="secondary" size="sm" onclick={cycleAvatar}>
         {AVATARS[$game.avatar].name}
       </Button>

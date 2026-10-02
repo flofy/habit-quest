@@ -35,34 +35,39 @@
 
 <div class="space-y-2">
   {#if active}
-    <Card class="py-8">
+    <Card class="py-10">
       <CardContent class="text-center">
-        <div class="mb-2 animate-bounce text-4xl" aria-hidden="true">{active.region.emoji}</div>
-        <div class="text-sm text-muted-foreground" role="status">
+        <div class="mb-3 animate-bounce text-5xl" aria-hidden="true">{active.region.emoji}</div>
+        <div class="text-sm font-bold text-secondary-foreground" role="status">
           Exploration de {active.region.name} en cours…
         </div>
         <div
-          class="mx-auto mt-3 h-2 w-full max-w-xs overflow-hidden rounded-full bg-muted"
+          class="panel-inset mx-auto mt-4 h-2.5 w-full max-w-xs overflow-hidden rounded-full p-[2px]"
           role="progressbar"
           aria-label="Progression de l'expédition"
           aria-valuenow={Math.round(progress)}
           aria-valuemin="0"
           aria-valuemax="100"
         >
-          <div class="h-full bg-primary transition-all" style="width: {progress}%"></div>
+          <div
+            class="h-full rounded-full bg-gradient-to-b from-[#f4cd6f] to-[#dda031] transition-all"
+            style="width: {progress}%; box-shadow: inset 0 1px 0 rgba(255,255,255,.4);"
+          ></div>
         </div>
       </CardContent>
     </Card>
   {:else}
     {#each REGIONS as region (region.id)}
       <Card>
-        <CardContent class="flex items-center gap-3 p-4">
-          <span class="text-3xl" aria-hidden="true">{region.emoji}</span>
+        <CardContent class="flex items-center gap-3 p-3">
+          <div class="panel-inset flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-3xl" aria-hidden="true">
+            {region.emoji}
+          </div>
           <div class="flex-1">
-            <div class="text-sm font-bold">{region.name}</div>
-            <div class="text-xs text-muted-foreground">
-              Loot : {region.rewards.coins[0]}-{region.rewards.coins[1]} 🪙 ·
-              {region.rewards.xp[0]}-{region.rewards.xp[1]} XP
+            <div class="font-display text-sm font-bold">{region.name}</div>
+            <div class="mt-1 flex flex-wrap gap-1">
+              <span class="chip chip-gold">{region.rewards.coins[0]}-{region.rewards.coins[1]} 🪙</span>
+              <span class="chip chip-emerald">{region.rewards.xp[0]}-{region.rewards.xp[1]} XP</span>
             </div>
           </div>
           <Button

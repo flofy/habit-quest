@@ -24,38 +24,41 @@
     onfx?.({
       el: e.currentTarget,
       texts: [
-        { text: "+" + habit.xp + " XP", color: "#4ade80" },
-        { text: "+" + habit.coins + " 🪙", color: "#f4d03f" },
+        { text: "+" + habit.xp + " XP", color: "#8fe3a0" },
+        { text: "+" + habit.coins + " 🪙", color: "#f4cd6f" },
       ],
       levelUps,
     });
   }
 </script>
 
-<Card class="mb-2 transition-opacity duration-200 {done ? 'opacity-60' : ''}">
-  <CardContent class="flex items-center gap-3 p-4">
-    <span class="text-2xl" aria-hidden="true">{habit.emoji}</span>
+<Card class="mb-2 transition-all duration-200 {done ? 'opacity-60 grayscale-[.35]' : ''}">
+  <CardContent class="flex items-center gap-3 p-3">
+    <div
+      class="panel-inset flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl"
+      aria-hidden="true"
+    >
+      {habit.emoji}
+    </div>
     <div class="min-w-0 flex-1">
-      <div class="truncate text-sm font-bold {done ? 'line-through text-muted-foreground' : ''}">
+      <div class="truncate text-sm font-bold {done ? 'text-muted-foreground line-through' : ''}">
         {habit.name}
       </div>
-      <div class="flex items-center gap-1 text-xs text-muted-foreground">
+      <div class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
         <span>{recLabel}</span>
         {#if streak > 0}
-          <span class="inline-flex items-center gap-0.5" title="{streak} jours de série">
-            <Icon name="flame" size={12} class="text-primary" label="" />
+          <span class="inline-flex items-center gap-0.5 font-bold text-primary" title="{streak} jours de série">
+            <Icon name="flame" size={12} label="" />
             <span>{streak} j</span>
           </span>
         {/if}
+        <span class="chip chip-emerald">+{habit.xp} XP</span>
+        <span class="chip chip-gold">+{habit.coins} 🪙</span>
       </div>
-    </div>
-    <div class="mr-1 shrink-0 text-right text-xs">
-      <div class="text-accent">+{habit.xp} XP</div>
-      <div class="text-primary">+{habit.coins} 🪙</div>
     </div>
     {#if done}
       <Button
-        variant="outline"
+        variant="secondary"
         size="icon"
         onclick={() => undoHabit(habit)}
         aria-label="Annuler « {habit.name} » pour aujourd'hui"
@@ -65,7 +68,7 @@
       </Button>
     {:else}
       <Button
-        variant="accent"
+        variant="default"
         size="sm"
         onclick={onComplete}
         aria-label="Marquer « {habit.name} » comme accomplie : +{habit.xp} XP, +{habit.coins} pièces"

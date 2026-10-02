@@ -8,21 +8,35 @@ export const RECURRENCES = [
   { id: "custom", label: "Jours précis" },
 ];
 
+// Personnages vectoriels lisses : un ton de robe clair/sombre par classe.
 export const AVATARS = [
-  { name: "Chevalier", palette: ["#3a2f2f", "#e8b796", "#c23b22", "#4a6da7", "#f4d03f", "#2c3e50"] },
-  { name: "Mage", palette: ["#2d2440", "#e8b796", "#7b4fbf", "#4a6da7", "#f4d03f", "#1a1a2e"] },
-  { name: "Rôdeur", palette: ["#2d3a2f", "#e8b796", "#3f7d20", "#8b5a2b", "#f4d03f", "#1e2d1f"] },
-];
-
-export const AVATAR_SPRITE = [
-  [0, 0, 1, 1, 1, 1, 0, 0],
-  [0, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 2, 2, 2, 2, 1, 0],
-  [0, 1, 2, 3, 3, 2, 1, 0],
-  [0, 0, 1, 1, 1, 1, 0, 0],
-  [0, 4, 4, 5, 5, 4, 4, 0],
-  [0, 4, 4, 5, 5, 4, 4, 0],
-  [0, 0, 6, 6, 6, 6, 0, 0],
+  {
+    name: "Chevalier",
+    skin: "#eebf9a",
+    hair: "#6b4423",
+    hood: "#3b4d63",
+    robe: ["#5a7bd4", "#37529c"],
+    belt: "#7a4a22",
+    weapon: "sword",
+  },
+  {
+    name: "Mage",
+    skin: "#eebf9a",
+    hair: "#e8e4d8",
+    hood: "#4a3a6e",
+    robe: ["#7b5fc0", "#5a4396"],
+    belt: "#3a2b52",
+    weapon: "staff",
+  },
+  {
+    name: "Rôdeur",
+    skin: "#eebf9a",
+    hair: "#3e2a16",
+    hood: "#2e4a2a",
+    robe: ["#5f9448", "#3f6b31"],
+    belt: "#6b4226",
+    weapon: "bow",
+  },
 ];
 
 export const SHOP_ITEMS = [
