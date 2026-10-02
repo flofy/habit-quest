@@ -19,11 +19,29 @@ Inspiré de Pixelio (Lux Studio), avec un univers de fantasy traité en vectorie
 
 Univers RPG de fantasy rendu de façon moderne et lisse :
 
-- Décor de crépuscule (ciel dégradé, montagnes, forêt, lune) derrière le héros
-- Panneaux en relief façon bois, boutons 3D à enfoncement, jetons or/émeraude
+- Scène vivante derrière le héros : ciel de crépuscule avec lune et halo,
+  étoiles scintillantes, nuages à la dérive, oiseaux, deux plans de montagnes
+  enneigées, château lointain, brume, forêt, herbe et fleurs, feu de camp
+  animé, lucioles
+- Personnages vectoriels détaillés : cape, épaulières métalliques, visage
+  (sourcils, sourire, pommettes), plis de robe, armes avec reflets
+- Panneaux en relief façon bois avec grain subtil, boutons 3D à enfoncement,
+  jetons or/émeraude
 - Typographie Cinzel (titres) + Nunito (texte), chargées via Google Fonts
 - Accessibilité : cibles tactiles >= 44px, ARIA complet, contrastes >= 4.5:1,
   support prefers-reduced-motion, icônes SVG (aucun emoji structurel)
+
+## 🖼 Sprites PNG (optionnel)
+
+Le héros vectoriel suffit pour démarrer, mais tu peux utiliser de vrais sprites :
+dépose des PNG dans src/lib/assets/heroes/ et ils remplacent le vectoriel
+automatiquement, sans toucher au code :
+
+- hero-sword.png — Chevalier
+- hero-staff.png — Mage
+- hero-bow.png — Rôdeur
+
+PNG à fond transparent recommandé (rendu en object-contain avec ombre portée douce).
 
 ## 🛠 Stack
 
@@ -64,7 +82,7 @@ Le fichier components.json est déjà configuré.
 
 ```
 src/
-├── app.css                  # Thème RPG (tokens, panneaux, jetons, or/émeraude)
+├── app.css                  # Thème RPG (tokens, panneaux, grain, animations de scène)
 ├── main.js
 ├── App.svelte               # Scène du héros, onglets, effets XP
 └── lib/
@@ -72,8 +90,9 @@ src/
     ├── game/
     │   ├── data.js          # Personnages, boutique, régions, modèles
     │   └── state.js         # Store global, logique de jeu, persistance
+    ├── assets/heroes/       # Sprites PNG optionnels (hero-<arme>.png)
     └── components/
-        ├── Avatar.svelte    # Personnage vectoriel lisse
+        ├── Avatar.svelte    # Héros : PNG si présent, sinon vectoriel détaillé
         ├── Icon.svelte      # Icônes SVG cohérentes (style Lucide)
         ├── HabitCard.svelte
         ├── HabitForm.svelte
