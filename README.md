@@ -14,6 +14,7 @@ Inspiré de Pixelio (Lux Studio), avec un univers de fantasy traité en vectorie
 - Séries (streaks), statistiques et journal d'aventure
 - Sauvegarde automatique en localStorage — aucun backend
 - Modèles d'habitudes pré-remplis pour démarrer
+- Installation en application (PWA) : manifeste, icônes, service worker offline
 
 ## 🎨 Design
 
@@ -63,6 +64,20 @@ Build de production :
 npm run build
 npm run preview
 ```
+
+## 📱 Installation en PWA
+
+Habit Quest est installable comme une application, avec fonctionnement hors
+ligne (les données restent en localStorage) :
+
+- Chrome / Edge desktop : icône d'installation dans la barre d'adresse
+- Android (Chrome) : bannière « Ajouter à l'écran d'accueil » ou menu du navigateur
+- iOS (Safari) : Partager → « Sur l'écran d'accueil »
+
+Les icônes PNG (192, 512, maskables, 180 pour iOS) sont générées au build par
+`scripts/generate-pwa-icons.mjs` (aucune dépendance) et ne sont pas versionnées.
+`npm run icons` les regénère à la main. La version vectorielle
+(`public/icons/icon.svg`) sert aussi de favicon.
 
 ## 🧩 À propos des composants UI
 

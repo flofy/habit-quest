@@ -6,7 +6,10 @@
   "description": "Open-source habit tracker RPG — quests, XP, gold, expeditions. Svelte 5 + Tailwind v4 + shadcn-svelte.",
   "scripts": {
     "dev": "vite",
+    "predev": "node scripts/generate-pwa-icons.mjs",
     "build": "vite build",
+    "prebuild": "node scripts/generate-pwa-icons.mjs",
+    "icons": "node scripts/generate-pwa-icons.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
