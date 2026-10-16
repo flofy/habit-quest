@@ -82,11 +82,13 @@
     {#if rec === "custom"}
       <div class="space-y-1">
         <span class="text-xs font-bold text-muted-foreground">Jours</span>
+        <!-- 7 boutons fluides : à largeur fixe, la ligne faisait ~332px et
+             débordait sur écrans étroits -->
         <div class="flex gap-1">
           {#each DAYS as d, i}
             <button
               type="button"
-              class="h-11 w-11 cursor-pointer rounded-lg text-sm font-bold transition-colors duration-75 {days.includes(i)
+              class="h-11 min-w-0 flex-1 cursor-pointer rounded-lg text-sm font-bold transition-colors duration-75 {days.includes(i)
                 ? 'bg-gradient-to-b from-[#f4cd6f] to-[#dda031] text-[#3a2a08] border border-[#8a5f16] shadow-[0_2px_0_#8a5f16]'
                 : 'panel-inset text-muted-foreground hover:text-secondary-foreground'}"
               aria-pressed={days.includes(i)}

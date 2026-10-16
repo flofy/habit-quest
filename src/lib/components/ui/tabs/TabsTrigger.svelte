@@ -9,7 +9,7 @@
 <button
   type="button"
   class={cn(
-    "flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-sm transition-all duration-75",
+    "flex min-h-11 min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-sm transition-all duration-75",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
     "active:translate-y-[2px]",
     active

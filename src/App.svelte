@@ -65,7 +65,7 @@
 
   {#if toast}
     <div
-      class="panel fixed bottom-8 left-1/2 z-50 -translate-x-1/2 px-4 py-2 text-sm font-bold text-primary"
+      class="panel fixed bottom-8 left-1/2 z-50 max-w-[calc(100vw-2rem)] -translate-x-1/2 px-4 py-2 text-center text-sm font-bold text-primary"
       role="status"
       aria-live="polite"
     >
@@ -245,7 +245,7 @@
         {#each TABS as t (t.value)}
           <TabsTrigger value={t.value}>
             <Icon name={t.icon} size={16} label="" />
-            <span>{t.label}</span>
+            <span class="truncate">{t.label}</span>
           </TabsTrigger>
         {/each}
       </TabsList>

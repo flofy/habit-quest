@@ -6,6 +6,7 @@
   --color-card: #223428;
   --color-card-foreground: #f2ead9;
   --color-popover: #223428;
+  --color-popover-foreground: #f2ead9;
   --color-primary: #e9b44c;
   --color-primary-foreground: #2d2006;
   --color-secondary: #2c4230;
@@ -21,6 +22,11 @@
   --color-ring: #e9b44c;
 }
 
+html {
+  /* Garde-fou mobile : aucun défilement horizontal, même en cas d'élément égaré */
+  overflow-x: hidden;
+}
+
 body {
   background:
     radial-gradient(1200px 500px at 50% -180px, rgba(74, 118, 168, 0.25), transparent 70%),
@@ -30,6 +36,22 @@ body {
   font-family: "Nunito", ui-sans-serif, system-ui, sans-serif;
   margin: 0;
   min-height: 100vh;
+  /* Mobile / PWA : pas de zoom double-tap, pas de pull-to-refresh,
+     respect des zones sûres (encoches, indicateur home) */
+  touch-action: manipulation;
+  overscroll-behavior-y: none;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* iOS Safari zoome automatiquement à la prise de focus d'un champ dont la
+   police fait moins de 16 px (et il ignore user-scalable=no) : on force 16 px. */
+input,
+select,
+textarea {
+  font-size: 16px;
 }
 
 .font-display {

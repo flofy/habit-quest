@@ -7,7 +7,9 @@
 </script>
 
 <div class="space-y-2">
-  <div class="grid grid-cols-3 gap-2">
+  <!-- 2 colonnes sur mobile (3 colonnes restaient trop serrées sous 360px),
+       3 colonnes sur écrans plus larges -->
+  <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
     {#each [
       { label: "Niveau", value: $game.level, chip: "gold" },
       { label: "Complétions", value: stats.completions, chip: "emerald" },
