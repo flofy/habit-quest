@@ -74,6 +74,11 @@ ligne (les données restent en localStorage) :
 - Android (Chrome) : bannière « Ajouter à l'écran d'accueil » ou menu du navigateur
 - iOS (Safari) : Partager → « Sur l'écran d'accueil »
 
+Un bouton « Installer » apparaît directement dans la carte du héros quand le
+navigateur le permet (Chrome, Edge, Samsung Internet…). Sur iPhone/iPad, une
+astuce s'affiche à la place (Partager → « Sur l'écran d'accueil »), car Safari
+ne fournit pas d'API d'installation.
+
 Les icônes PNG (192, 512, maskables, 180 pour iOS) sont générées au build par
 `scripts/generate-pwa-icons.mjs` (aucune dépendance) et ne sont pas versionnées.
 `npm run icons` les regénère à la main. La version vectorielle
@@ -99,7 +104,7 @@ Le fichier components.json est déjà configuré.
 src/
 ├── app.css                  # Thème RPG (tokens, panneaux, grain, animations de scène)
 ├── main.js
-├── App.svelte               # Scène du héros, onglets, effets XP
+├── App.svelte               # Scène du héros, onglets, effets XP, bouton d'installation
 └── lib/
     ├── utils.js             # cn() (clsx + tailwind-merge)
     ├── game/

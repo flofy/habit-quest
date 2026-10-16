@@ -26,9 +26,46 @@
   let toast = $state(null);
   let toastTimer;
 
+  // Installation PWA : le navigateur annonce sa disponibilité via
+  // beforeinstallprompt ; on capture l'événement pour proposer un vrai
+  // bouton dans l'app (sur mobile, l'option est sinon enterrée dans le
+  // menu du navigateur, et iOS ne la propose pas du tout).
+  let installEvent = $state(null);
+  let iosHint = $state(false);
+
   const avatar = $derived(AVATARS[$game.avatar]);
   const dueHabits = $derived($game.habits.filter(isDue));
   const doneToday = $derived($game.habits.filter((h) => h.history.includes(todayISO())).length);
+
+  $effect(() => {
+    // Déjà installée (lancée depuis l'écran d'accueil) : rien à proposer.
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true;
+    if (standalone) return;
+
+    // Safari iOS ne déclenche jamais beforeinstallprompt :
+    // on affiche une astuce (Partager -> Sur l'écran d'accueil).
+    if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+      iosHint = true;
+      return;
+    }
+
+    function onPrompt(e) {
+      e.preventDefault();
+      installEvent = e;
+    }
+    window.addEventListener("beforeinstallprompt", onPrompt);
+    return () => window.removeEventListener("beforeinstallprompt", onPrompt);
+  });
+
+  async function install() {
+    if (!installEvent) return;
+    installEvent.prompt();
+    const { outcome } = await installEvent.userChoice;
+    installEvent = null;
+    if (outcome === "accepted") showToast("🎉 Habit Quest installée !");
+  }
 
   function handleFx(detail) {
     const rect = detail.el.getBoundingClientRect();
@@ -225,10 +262,33 @@
           <div class="nameplate px-3 py-1 font-display text-sm font-bold">
             {avatar.name} · Niveau {$game.level}
           </div>
-          <span class="chip chip-gold" aria-label="Pièces d'or : {$game.coins}">
-            🪙 {$game.coins}
-          </span>
+          <div class="flex items-center gap-2">
+            {#if installEvent}
+              <Button variant="secondary" size="sm" onclick={install}>
+                <Icon name="download" size={16} label="" />
+                Installer
+              </Button>
+            {/if}
+            <span class="chip chip-gold" aria-label="Pièces d'or : {$game.coins}">
+              🪙 {$game.coins}
+            </span>
+          </div>
         </div>
+        {#if iosHint}
+          <div
+            class="flex items-center justify-between gap-2 rounded-lg border border-border/60 bg-secondary/40 px-3 py-2 text-xs text-muted-foreground"
+          >
+            <span>📱 iPhone : bouton Partager, puis « Sur l'écran d'accueil »</span>
+            <button
+              type="button"
+              class="shrink-0 cursor-pointer rounded p-1 hover:text-foreground"
+              aria-label="Masquer l'astuce d'installation"
+              onclick={() => (iosHint = false)}
+            >
+              <Icon name="x" size={14} label="" />
+            </button>
+          </div>
+        {/if}
         <Progress
           value={$game.xp}
           max={xpNeeded($game.level)}
