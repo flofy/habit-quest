@@ -8,6 +8,7 @@
 // Les données du jeu vivent dans localStorage et ne passent pas par ici.
 
 const CACHE = "habit-quest-v1";
+const CACHE_PREFIX = "habit-quest-";
 const SHELL = ["./"];
 
 self.addEventListener("install", (event) => {
@@ -24,7 +25,11 @@ self.addEventListener("activate", (event) => {
     caches
       .keys()
       .then((keys) =>
-        Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))
+        Promise.all(
+          keys
+            .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE)
+            .map((key) => caches.delete(key))
+        )
       )
       .then(() => self.clients.claim())
   );
