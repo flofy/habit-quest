@@ -92,3 +92,68 @@ def star(cx, cy, ro, ri, n=5, rot=-90):
         a = math.radians(rot + i * 180 / n)
         pts.append(f"{cx + r * math.cos(a):.1f},{cy + r * math.sin(a):.1f}")
     return " ".join(pts)
+
+
+# ───────────────────────── Armes ─────────────────────────
+def sword(p):
+    return f"""
+    <polygon points="128,10 145,50 145,176 111,176 111,50" fill="url(#mh)" {S}/>
+    <rect x="124.5" y="48" width="7" height="112" rx="3.5" fill="{p['metal'][2]}" opacity=".55"/>
+    <rect x="114" y="52" width="4" height="118" rx="2" {HI}/>
+    <rect x="80" y="174" width="96" height="17" rx="8.5" fill="url(#gold)" {S}/>
+    {gem_circle(128, 182.5, 6.5)}
+    {grip(128, 191, 42)}
+    <circle cx="128" cy="242" r="12.5" fill="url(#gold)" {S}/>
+    <ellipse cx="124" cy="238" rx="4" ry="3" {HI}/>"""
+
+
+def frostblade(p):
+    pts = "128,6 151,40 143,62 153,86 144,110 154,136 145,160 145,180 111,180 111,160 102,136 112,110 103,86 113,62 105,40"
+    right = "128,8 151,40 143,62 153,86 144,110 154,136 145,160 145,178 128,178"
+    return f"""
+    <polygon points="{pts}" fill="url(#ice)" {S}/>
+    <polygon points="{right}" fill="#2f7fc0" opacity=".35"/>
+    <path d="M128 18 V172" stroke="#e9fbff" stroke-width="3" opacity=".8"/>
+    <path d="M116 60 L122 130" stroke="#fff" stroke-width="3" opacity=".6" stroke-linecap="round"/>
+    <path d="M66 184 Q98 164 128 176 Q158 164 190 184 Q160 200 128 192 Q96 200 66 184 Z" fill="url(#gold)" {S}/>
+    {gem_circle(128, 184, 8)}
+    {grip(128, 194, 38)}
+    <polygon points="128,228 142,242 128,256 114,242" fill="url(#gem)" {S}/>"""
+
+
+def stellarblade(p):
+    return f"""
+    <polygon points="128,4 142,38 142,172 114,172 114,38" fill="url(#glowv)" {S}/>
+    <rect x="125.5" y="26" width="5" height="142" rx="2.5" fill="{p['trim']}" opacity=".95"/>
+    <polygon points="{star(128, 66, 7, 2.2, 4)}" fill="#fff"/>
+    <polygon points="{star(128, 190, 40, 17, 5)}" fill="url(#mv)" {S}/>
+    {gem_circle(128, 190, 10)}
+    {grip(128, 214, 28, 18)}
+    <circle cx="128" cy="252" r="11" fill="url(#gem)" {S}/>
+    <polygon points="{star(160, 90, 9, 2.5, 4)}" fill="#fff" opacity=".9"/>
+    <polygon points="{star(98, 126, 7, 2, 4)}" fill="#fff" opacity=".8"/>"""
+
+
+# ───────────────────────── Boucliers ─────────────────────────
+def shield(p):
+    d = "M128 16 L214 44 V120 C214 174 172 216 128 240 C84 216 42 174 42 120 V44 Z"
+    return f"""
+    <path d="{d}" fill="url(#wood)" {st(16)}/>
+    <path d="{d}" fill="none" stroke="url(#mv)" stroke-width="9"/>
+    <path d="M96 40 V210 M160 40 V210" stroke="{OUT}" stroke-width="3" opacity=".25"/>
+    <path d="M60 60 C60 100 70 150 100 200" stroke="#fff" stroke-width="4" opacity=".25" fill="none" stroke-linecap="round"/>
+    <circle cx="128" cy="116" r="30" fill="url(#mh)" {S}/>
+    <circle cx="128" cy="116" r="16" fill="url(#gold)" {st(4)}/>
+    <ellipse cx="121" cy="108" rx="5" ry="3.5" {HI}/>
+    {''.join(f'<circle cx="{x}" cy="{y}" r="4.5" fill="url(#gold)" stroke="{OUT}" stroke-width="2.5"/>' for x, y in [(70, 52), (186, 52), (56, 112), (200, 112), (128, 224)])}"""
+
+
+def aegis(p):
+    return f"""
+    <circle cx="128" cy="130" r="112" fill="url(#gold)" {st(8)}/>
+    <circle cx="128" cy="130" r="94" fill="{darken(p['metal'][2], .3)}" {st(4)}/>
+    <polygon points="{star(128, 130, 86, 52, 12)}" fill="url(#gold)" {st(4)}/>
+    <circle cx="128" cy="130" r="46" fill="url(#mv)" {S}/>
+    {gem_circle(128, 130, 30)}
+    {''.join(f'<circle cx="{128 + 103 * __import__("math").cos(__import__("math").radians(a)):.1f}" cy="{130 + 103 * __import__("math").sin(__import__("math").radians(a)):.1f}" r="5" fill="{p["trim"]}" stroke="{OUT}" stroke-width="2.5"/>' for a in range(0, 360, 45))}
+    <path d="M60 80 C72 56 92 40 116 34" stroke="#fff" stroke-width="6" opacity=".4" fill="none" stroke-linecap="round"/>"""
