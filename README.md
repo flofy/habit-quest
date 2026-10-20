@@ -44,6 +44,16 @@ automatiquement, sans toucher au code :
 
 PNG à fond transparent recommandé (rendu en object-contain avec ombre portée douce).
 
+### Équipement
+
+Chaque objet de la boutique a son sprite dans src/lib/assets/items/<id>.png (14 fournis).
+Il sert à la fois d'icône dans la boutique et de pièce portée sur le héros vectoriel
+(emplacement réglé dans src/lib/game/sprites.js). Déposer un PNG du même nom le remplace.
+Les sprites fournis sont générés par `python3 scripts/build-item-sprites.py`
+(outil optionnel : pip install cairosvg pillow) ; ils ne sont pas régénérés au build.
+Un seul objet par emplacement (tête, accessoire, armure, arme, bouclier, bottes) ;
+chaque objet donne un bonus d'XP et/ou de pièces, affiché dans la boutique.
+
 ## 🛠 Stack
 
 - Svelte 5 (runes)
@@ -111,6 +121,7 @@ src/
     │   ├── data.js          # Personnages, boutique, régions, modèles
     │   └── state.js         # Store global, logique de jeu, persistance
     ├── assets/heroes/       # Sprites PNG optionnels (hero-<arme>.png)
+    ├── assets/items/        # Sprites PNG des objets d'équipement (<id>.png)
     └── components/
         ├── Avatar.svelte    # Héros : PNG si présent, sinon vectoriel détaillé
         ├── Icon.svelte      # Icônes SVG cohérentes (style Lucide)
