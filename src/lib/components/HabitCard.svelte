@@ -3,13 +3,15 @@
   import { Button } from "$lib/components/ui/button/index.js";
   import Icon from "$lib/components/Icon.svelte";
   import { DAYS } from "$lib/game/data.js";
-  import { completeHabit, undoHabit, deleteHabit, streakOf, todayISO } from "$lib/game/state.js";
+  import { completeHabit, undoHabit, deleteHabit, streakOf, todayISO, rewardFor, game } from "$lib/game/state.js";
 
   let { habit, onfx } = $props();
 
   const today = todayISO();
   const done = $derived(habit.history.includes(today));
   const streak = $derived(streakOf(habit));
+  // Récompense réelle, bonus d'équipement compris
+  const reward = $derived(rewardFor($game, habit.xp, habit.coins));
 
   const recLabel = $derived(
     habit.rec === "daily"
@@ -20,12 +22,12 @@
   );
 
   function onComplete(e) {
-    const levelUps = completeHabit(habit);
+    const { levelUps, xp, coins } = completeHabit(habit);
     onfx?.({
       el: e.currentTarget,
       texts: [
-        { text: "+" + habit.xp + " XP", color: "#8fe3a0" },
-        { text: "+" + habit.coins + " 🪙", color: "#f4cd6f" },
+        { text: "+" + xp + " XP", color: "#8fe3a0" },
+        { text: "+" + coins + " 🪙", color: "#f4cd6f" },
       ],
       levelUps,
     });
@@ -52,8 +54,8 @@
             <span>{streak} j</span>
           </span>
         {/if}
-        <span class="chip chip-emerald">+{habit.xp} XP</span>
-        <span class="chip chip-gold">+{habit.coins} 🪙</span>
+        <span class="chip chip-emerald">+{reward.xp} XP</span>
+        <span class="chip chip-gold">+{reward.coins} 🪙</span>
       </div>
     </div>
     {#if done}
@@ -71,7 +73,7 @@
         variant="default"
         size="sm"
         onclick={onComplete}
-        aria-label="Marquer « {habit.name} » comme accomplie : +{habit.xp} XP, +{habit.coins} pièces"
+        aria-label="Marquer « {habit.name} » comme accomplie : +{reward.xp} XP, +{reward.coins} pièces"
       >
         Terminer
       </Button>

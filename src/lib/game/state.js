@@ -1,5 +1,5 @@
 import { writable, get } from "svelte/store";
-import { TEMPLATES, XP_PER_LEVEL, AVATARS } from "./data.js";
+import { TEMPLATES, XP_PER_LEVEL, AVATARS, SHOP_ITEMS } from "./data.js";
 
 const KEY = "habit-quest-save";
 
@@ -63,6 +63,25 @@ export function streakOf(habit) {
   return streak;
 }
 
+// Bonus cumulés de l'équipement porté : { xp, coins } en fractions (0.15 = +15 %).
+export function bonusOf(g) {
+  const total = { xp: 0, coins: 0 };
+  for (const item of SHOP_ITEMS) {
+    if (!g.equipped.includes(item.id)) continue;
+    total.xp += item.bonus?.xp ?? 0;
+    total.coins += item.bonus?.coins ?? 0;
+  }
+  return total;
+}
+
+const boost = (base, pct) => Math.round(base * (1 + pct));
+
+// Récompense réelle (équipement inclus) d'une valeur de base.
+export function rewardFor(g, xp, coins) {
+  const b = bonusOf(g);
+  return { xp: boost(xp, b.xp), coins: boost(coins, b.coins) };
+}
+
 function gain(g, xp, coins, label) {
   g.xp += xp;
   g.coins += coins;
@@ -79,15 +98,19 @@ function gain(g, xp, coins, label) {
 
 export function completeHabit(habit) {
   const today = todayISO();
-  let levelUps = 0;
+  let result = { levelUps: 0, xp: habit.xp, coins: habit.coins };
   game.update((g) => {
     const h = g.habits.find((x) => x.id === habit.id);
     if (!h || h.history.includes(today)) return g;
+    const { xp, coins } = rewardFor(g, habit.xp, habit.coins);
     h.history = [...h.history, today];
-    levelUps = gain(g, habit.xp, habit.coins, "+" + habit.xp + " XP · +" + habit.coins + " 🪙 · " + habit.name);
+    // On mémorise ce qui a été réellement gagné pour que « annuler » rembourse
+    // exactement la même chose, même si l'équipement a changé entre-temps.
+    h.lastAward = { d: today, xp, coins };
+    result = { levelUps: gain(g, xp, coins, "+" + xp + " XP · +" + coins + " 🪙 · " + habit.name), xp, coins };
     return g;
   });
-  return levelUps;
+  return result;
 }
 
 export function undoHabit(habit) {
@@ -95,9 +118,11 @@ export function undoHabit(habit) {
   game.update((g) => {
     const h = g.habits.find((x) => x.id === habit.id);
     if (!h || !h.history.includes(today)) return g;
+    const award = h.lastAward?.d === today ? h.lastAward : { xp: habit.xp, coins: habit.coins };
     h.history = h.history.filter((d) => d !== today);
-    g.xp = Math.max(0, g.xp - habit.xp);
-    g.coins = Math.max(0, g.coins - habit.coins);
+    h.lastAward = undefined;
+    g.xp = Math.max(0, g.xp - award.xp);
+    g.coins = Math.max(0, g.coins - award.coins);
     return g;
   });
 }
@@ -126,10 +151,13 @@ export function buyItem(item) {
 }
 
 export function toggleEquip(id) {
-  game.update((g) => ({
-    ...g,
-    equipped: g.equipped.includes(id) ? g.equipped.filter((i) => i !== id) : [...g.equipped, id],
-  }));
+  const item = SHOP_ITEMS.find((i) => i.id === id);
+  game.update((g) => {
+    if (g.equipped.includes(id)) return { ...g, equipped: g.equipped.filter((i) => i !== id) };
+    // Un seul objet par emplacement : équiper remplace celui déjà porté.
+    const keep = g.equipped.filter((i) => SHOP_ITEMS.find((x) => x.id === i)?.slot !== item?.slot);
+    return { ...g, equipped: [...keep, id] };
+  });
 }
 
 export function cycleAvatar() {
@@ -145,8 +173,7 @@ export function startExpedition(region) {
 
 export function finishExpedition(region) {
   const roll = ([min, max]) => Math.floor(min + Math.random() * (max - min));
-  const coins = roll(region.rewards.coins);
-  const xp = roll(region.rewards.xp);
+  const { xp, coins } = rewardFor(get(game), roll(region.rewards.xp), roll(region.rewards.coins));
   let levelUps = 0;
   game.update((g) => {
     levelUps = gain(g, xp, coins, region.emoji + " Expédition : +" + coins + " 🪙 +" + xp + " XP");

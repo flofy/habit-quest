@@ -7,9 +7,25 @@
     import: "default",
   });
 
+  import ItemIcon from "$lib/components/ItemIcon.svelte";
+  import { itemById, paletteOf } from "$lib/game/data.js";
+  import { itemSprite, WORN, SLOT_Z } from "$lib/game/sprites.js";
+
   let { avatar, size = 96, equipped = [] } = $props();
 
   const gid = $derived("hero-" + avatar.weapon);
+
+  // Objets portés dont on a un sprite PNG, triés pour la superposition ;
+  // les autres retombent sur les couches vectorielles d'origine.
+  const worn = $derived(
+    equipped
+      .map((id) => ({ id, item: itemById(id), src: itemSprite(id), box: WORN[id] }))
+      .filter((w) => w.item && w.src && w.box)
+      .sort((a, b) => SLOT_Z.indexOf(a.item.slot) - SLOT_Z.indexOf(b.item.slot))
+  );
+  const vec = (id) => equipped.includes(id) && !itemSprite(id);
+  // Une arme équipée remplace l'arme de classe du héros (évite la double arme)
+  const armed = $derived(equipped.some((id) => itemById(id)?.slot === "weapon"));
   const pngKey = $derived("/src/lib/assets/heroes/hero-" + avatar.weapon + ".png");
   const pngSrc = $derived(heroModules[pngKey] ?? null);
 </script>
@@ -38,27 +54,36 @@
           <stop offset="0.5" stop-color="#9be8ff" />
           <stop offset="1" stop-color="#4f9fd8" />
         </radialGradient>
+        <!-- dégradés métal propres à chaque objet équipé (couleur selon la rareté) -->
+        {#each equipped as id (id)}
+          {@const p = paletteOf(id)}
+          <linearGradient id="{gid}-m-{id}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color={p.metal[0]} />
+            <stop offset="0.5" stop-color={p.metal[1]} />
+            <stop offset="1" stop-color={p.metal[2]} />
+          </linearGradient>
+        {/each}
       </defs>
 
       <!-- ombre de contact -->
       <ellipse cx="32" cy="61" rx="17" ry="3.5" fill="rgba(0,0,0,0.35)" />
 
       <!-- arme de classe -->
-      {#if avatar.weapon === "staff"}
+      {#if avatar.weapon === "staff" && !armed}
         <rect x="50" y="16" width="3" height="42" rx="1.5" fill="#7a5a34" />
         <rect x="49.4" y="18" width="1" height="36" rx="0.5" fill="#9a7748" opacity="0.8" />
         <circle cx="51.5" cy="13" r="7" fill="#9be8ff" opacity="0.25" />
         <circle cx="51.5" cy="13" r="4.2" fill="url(#{gid}-orb)" />
         <path d="M49.5 9.5 L50.2 11 L48.6 11.2 Z" fill="#eaffff" opacity="0.9" />
       {/if}
-      {#if avatar.weapon === "sword"}
+      {#if avatar.weapon === "sword" && !armed}
         <rect x="10.5" y="24" width="3" height="24" rx="1" fill="url(#{gid}-metal)" />
         <rect x="11.2" y="25" width="0.8" height="20" rx="0.4" fill="#ffffff" opacity="0.55" />
         <rect x="7" y="48" width="10" height="3" rx="1.5" fill="#8a5f16" />
         <circle cx="12" cy="52.5" r="1.6" fill="#e9b44c" />
         <rect x="10.8" y="50" width="2.4" height="5" rx="1.2" fill="#6b4a1e" />
       {/if}
-      {#if avatar.weapon === "bow"}
+      {#if avatar.weapon === "bow" && !armed}
         <path d="M13 27 Q4.5 42 13 57" stroke="#8b5a2b" stroke-width="3" fill="none" stroke-linecap="round" />
         <path d="M13 27 Q4.5 42 13 57" stroke="#a9773f" stroke-width="1.2" fill="none" opacity="0.6" />
         <line x1="13" y1="27" x2="13" y2="57" stroke="#d8d0c0" stroke-width="1" />
@@ -126,14 +151,73 @@
       <ellipse cx="26.2" cy="21.8" rx="1.3" ry="0.8" fill="#d98a6a" opacity="0.35" />
       <ellipse cx="37.8" cy="21.8" rx="1.3" ry="0.8" fill="#d98a6a" opacity="0.35" />
       <path d="M29.5 23 Q32 25.2 34.5 23" stroke="#b5836a" stroke-width="1.2" fill="none" stroke-linecap="round" />
+
+      <!-- équipement visible (couches dessinées sur le héros) -->
+      {#if vec("boots")}
+        {@const p = paletteOf("boots")}
+        <rect x="25" y="50" width="6" height="9" rx="2" fill="#8a5a2b" />
+        <rect x="33" y="50" width="6" height="9" rx="2" fill="#8a5a2b" />
+        <rect x="25" y="50" width="6" height="2.6" rx="1" fill={p.trim} />
+        <rect x="33" y="50" width="6" height="2.6" rx="1" fill={p.trim} />
+        <rect x="25" y="56.5" width="6" height="2" rx="1" fill="#2e2115" />
+        <rect x="33" y="56.5" width="6" height="2" rx="1" fill="#2e2115" />
+      {/if}
+      {#if vec("armor")}
+        {@const p = paletteOf("armor")}
+        <path d="M22.5 31 C26.5 33.6 37.5 33.6 41.5 31 L42.5 41 C37.5 43 26.5 43 21.5 41 Z" fill="url(#{gid}-m-armor)" stroke={p.metal[2]} stroke-width="0.6" />
+        <path d="M32 34 L34.6 37.4 L32 40.8 L29.4 37.4 Z" fill={p.trim} stroke="#8a5f16" stroke-width="0.5" />
+        <path d="M24 33 L24.6 40" stroke="#fff" stroke-width="0.8" opacity="0.5" stroke-linecap="round" />
+      {/if}
+      {#if vec("amulet")}
+        {@const p = paletteOf("amulet")}
+        <path d="M27.5 29.5 Q32 38.5 36.5 29.5" stroke={p.trim} stroke-width="0.9" fill="none" stroke-linecap="round" />
+        <circle cx="32" cy="36.2" r="2.1" fill={p.trim} stroke="#8a5f16" stroke-width="0.4" />
+        <path d="M32 34.4 L33.6 36.2 L32 38 L30.4 36.2 Z" fill={p.gem} />
+      {/if}
+      {#if vec("shield")}
+        {@const p = paletteOf("shield")}
+        <path d="M7.5 30.5 L19.5 30.5 L19.5 42 C19.5 47.5 13.5 51 13.5 51 C13.5 51 7.5 47.5 7.5 42 Z" fill="#8a5a2b" stroke={p.metal[1]} stroke-width="1.2" stroke-linejoin="round" />
+        <path d="M13.5 31.5 V49" stroke={p.metal[1]} stroke-width="0.6" opacity="0.7" />
+        <circle cx="13.5" cy="38.5" r="2.4" fill={p.trim} stroke="#8a5f16" stroke-width="0.5" />
+      {/if}
+      {#if vec("helmet")}
+        {@const p = paletteOf("helmet")}
+        <path d="M21.8 17.5 C21.8 8.5 26.5 5 32 5 C37.5 5 42.2 8.5 42.2 17.5 L39.6 17.5 C39.2 12.4 36.4 10.6 32 10.6 C27.6 10.6 24.8 12.4 24.4 17.5 Z" fill="url(#{gid}-m-helmet)" stroke={p.metal[2]} stroke-width="0.6" stroke-linejoin="round" />
+        <rect x="30.9" y="10" width="2.2" height="7.5" rx="1" fill={p.metal[2]} />
+        <path d="M32 2.6 C33.8 4 33.8 5.2 32 6.4 C30.2 5.2 30.2 4 32 2.6 Z" fill="#ee8174" />
+      {/if}
+      {#if vec("sword")}
+        {@const p = paletteOf("sword")}
+        <rect x="43.9" y="22" width="3" height="22" rx="1" fill="url(#{gid}-m-sword)" />
+        <rect x="44.6" y="23" width="0.8" height="18" rx="0.4" fill="#fff" opacity="0.55" />
+        <rect x="40.5" y="43.6" width="9.8" height="2.8" rx="1.4" fill={p.trim} />
+        <rect x="44.2" y="46" width="2.6" height="5" rx="1.2" fill="#6b4a1e" />
+      {/if}
+
+      <!-- équipement porté (sprites PNG) -->
+      {#each worn as w (w.id)}
+        {@const glow = paletteOf(w.id).glow}
+        <image
+          href={w.src}
+          x={w.box[0]}
+          y={w.box[1]}
+          width={w.box[2]}
+          height={w.box[3]}
+          preserveAspectRatio="xMidYMid meet"
+          style={glow ? `filter: drop-shadow(0 0 1.2px ${glow}99)` : undefined}
+        />
+      {/each}
     </svg>
   {/if}
 
-  <!-- équipement visible -->
-  {#if equipped.includes("sword")}<span class="absolute -right-1 top-8 text-sm" aria-hidden="true">⚔️</span>{/if}
-  {#if equipped.includes("shield")}<span class="absolute -left-1 top-8 text-sm" aria-hidden="true">🛡️</span>{/if}
-  {#if equipped.includes("helmet")}<span class="absolute -top-1 left-1/2 -translate-x-1/2 text-sm" aria-hidden="true">⛑️</span>{/if}
-  {#if equipped.includes("amulet")}<span class="absolute top-[46%] left-1/2 -translate-x-1/2 text-xs" aria-hidden="true">📿</span>{/if}
-  {#if equipped.includes("boots")}<span class="absolute -bottom-1 left-2 text-xs" aria-hidden="true">🥾</span>{/if}
-  {#if equipped.includes("armor")}<span class="absolute top-[42%] left-1/2 -translate-x-1/2 text-xs" aria-hidden="true">✨</span>{/if}
+  <!-- sprite PNG : pas de couches vectorielles, on affiche l'équipement en pastilles -->
+  {#if pngSrc && equipped.length}
+    <div class="absolute -right-2 bottom-0 flex flex-col gap-0.5">
+      {#each equipped as id (id)}
+        <span class="panel-inset flex h-5 w-5 items-center justify-center rounded-md p-0.5">
+          <ItemIcon {id} size={16} />
+        </span>
+      {/each}
+    </div>
+  {/if}
 </div>
