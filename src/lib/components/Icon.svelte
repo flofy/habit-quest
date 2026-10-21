@@ -39,6 +39,11 @@
       '<path d="m7 10 5 5 5-5"/>',
       '<path d="M12 15V3"/>',
     ],
+    menu: [
+      '<path d="M4 6h16"/>',
+      '<path d="M4 12h16"/>',
+      '<path d="M4 18h16"/>',
+    ],
   };
 
   let { name, size = 20, class: cls = "", label = null } = $props();

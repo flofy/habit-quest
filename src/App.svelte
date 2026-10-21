@@ -30,8 +30,17 @@
   // beforeinstallprompt ; on capture l'événement pour proposer un vrai
   // bouton dans l'app (sur mobile, l'option est sinon enterrée dans le
   // menu du navigateur, et iOS ne la propose pas du tout).
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+
   let installEvent = $state(null);
   let iosHint = $state(false);
+  let menuOpen = $state(false);
+  let installHelp = $state(false);
+
+  const standaloneNow = () =>
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true;
 
   const avatar = $derived(AVATARS[$game.avatar]);
   const dueHabits = $derived($game.habits.filter(isDue));
@@ -39,14 +48,11 @@
 
   $effect(() => {
     // Déjà installée (lancée depuis l'écran d'accueil) : rien à proposer.
-    const standalone =
-      window.matchMedia("(display-mode: standalone)").matches ||
-      window.navigator.standalone === true;
-    if (standalone) return;
+    if (standaloneNow()) return;
 
     // Safari iOS ne déclenche jamais beforeinstallprompt :
     // on affiche une astuce (Partager -> Sur l'écran d'accueil).
-    if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+    if (isIOS) {
       iosHint = true;
       return;
     }
@@ -65,6 +71,23 @@
     const { outcome } = await installEvent.userChoice;
     installEvent = null;
     if (outcome === "accepted") showToast("🎉 Habit Quest installée !");
+  }
+
+  // Menu burger → « Installer l'application » : force la demande au
+  // navigateur. Sans événement beforeinstallprompt, la boîte native ne
+  // peut pas être déclenchée (restriction navigateur) : on affiche alors
+  // un guide pas-à-pas adapté à la plateforme.
+  async function forceInstall() {
+    menuOpen = false;
+    if (standaloneNow()) {
+      showToast("Habit Quest est déjà installée 🎉");
+      return;
+    }
+    if (installEvent) {
+      await install();
+      return;
+    }
+    installHelp = true;
   }
 
   function handleFx(detail) {
@@ -110,7 +133,93 @@
     </div>
   {/if}
 
+  {#if installHelp}
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="install-help-title"
+    >
+      <button
+        type="button"
+        class="absolute inset-0 bg-black/60"
+        aria-label="Fermer"
+        onclick={() => (installHelp = false)}
+      ></button>
+      <div class="panel relative w-full max-w-sm p-4">
+        <h2 id="install-help-title" class="font-display text-base font-bold">
+          Installer Habit Quest
+        </h2>
+        <div class="mt-3 space-y-2 text-sm text-muted-foreground">
+          {#if isIOS}
+            <p>
+              Safari ne fournit pas de bouton d'installation : ouvrez le bouton
+              <span class="font-bold text-foreground">Partager</span>, puis
+              <span class="font-bold text-foreground">« Sur l'écran d'accueil »</span>.
+            </p>
+          {:else if isAndroid}
+            <p>
+              Ouvrez le menu du navigateur (⋮), puis
+              <span class="font-bold text-foreground">« Installer l'application »</span>
+              ou <span class="font-bold text-foreground">« Ajouter à l'écran d'accueil »</span>.
+            </p>
+          {:else}
+            <p>
+              Cliquez sur l'icône d'installation dans la barre d'adresse du
+              navigateur, ou menu du navigateur →
+              <span class="font-bold text-foreground">« Installer Habit Quest… »</span>.
+            </p>
+          {/if}
+          <p class="text-xs">
+            La boîte de dialogue native n'est proposée que lorsque le navigateur
+            considère l'application installable (HTTPS, manifeste, icônes) et
+            qu'elle n'est pas déjà installée.
+          </p>
+        </div>
+        <Button variant="secondary" class="mt-4 w-full" onclick={() => (installHelp = false)}>
+          Fermer
+        </Button>
+      </div>
+    </div>
+  {/if}
+
   <div class="mx-auto max-w-2xl px-4 pb-12 pt-6">
+    <header class="mb-3 flex items-center justify-between">
+      <span class="font-display text-lg font-bold">⚔️ Habit Quest</span>
+      <Button
+        variant="ghost"
+        size="icon"
+        class="text-muted-foreground"
+        aria-haspopup="menu"
+        aria-expanded={menuOpen}
+        aria-label="Menu de l'application"
+        onclick={() => (menuOpen = !menuOpen)}
+      >
+        <Icon name="menu" label="" />
+      </Button>
+    </header>
+
+    {#if menuOpen}
+      <!-- fond invisible : ferme le menu au clic extérieur -->
+      <button
+        type="button"
+        class="fixed inset-0 z-30 cursor-default"
+        aria-label="Fermer le menu"
+        onclick={() => (menuOpen = false)}
+      ></button>
+      <div role="menu" aria-label="Menu de l'application" class="panel fixed right-4 top-[4.5rem] z-40 w-60 p-2">
+        <button
+          type="button"
+          role="menuitem"
+          class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-bold text-foreground transition-colors duration-75 hover:bg-secondary"
+          onclick={forceInstall}
+        >
+          <Icon name="download" size={16} label="" />
+          Installer l'application
+        </button>
+      </div>
+    {/if}
+
     <!-- Héros : scène vivante de crépuscule -->
     <Card class="mb-4 overflow-hidden">
       <div class="relative h-44 w-full overflow-hidden rounded-t-[15px]">
